@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import NavBar from "./components/organisms/NavBar";
+import NavBar from "./components/organisms/navBar";
 import FilterSection from "./components/organisms/filterSection";
 import CardSection from "./components/organisms/cardSection";
 import Footer from "./components/organisms/footer";

@@ -9,7 +9,7 @@ const App = () => {
   return (
     <Router>
       <div id="app" className="flex flex-col min-h-screen">
-        <NavBar />
+        <Navbar />
         <FilterSection />
         <CardSection/>
         <Footer/>

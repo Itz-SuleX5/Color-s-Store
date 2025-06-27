@@ -8,9 +8,9 @@ interface ProductCardProps {
 }
 
 const Card: React.FC<ProductCardProps> = ({title, price, imageUrl, category}) => (
-    <div className="bg-white rounded-lg">
-        <div className="relative">
-            <img src={imageUrl} alt="" className="object-contain"/>
+    <div className="bg-white rounded-lg border border-purple-300">
+        <div className="relative w-auto h-80 overflow-hidden rounded-t-lg">
+            <img src={imageUrl} alt="" className="object-cover w-full h-full"/>
             <div className="absolute z-10 top-2 right-2 bg-pink-300 py-1 px-2 rounded text-white rotate-6">
                 {category}
             </div>

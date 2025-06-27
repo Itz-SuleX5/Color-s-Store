@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, X } from 'lucide-react';
 
-export default function PrincipalDnD() {
+export default function PrincipalDnD({onImageChange}) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -43,8 +43,12 @@ export default function PrincipalDnD() {
     const reader = new FileReader();
     reader.onload = (e) => {
       setImagePreview(e.target.result);
+      if (onImageChange) {
+    onImageChange(file);
+  }
     };
     reader.readAsDataURL(file);
+    
   };
 
   const removeImage = () => {

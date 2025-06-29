@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Card from "../molecules/card";
+import ProductModal from "../molecules/ProductModal";
 
 
 const testProduct = [{
@@ -42,12 +43,14 @@ const testProduct = [{
 
 ];
 const CardSection = () => {
-    const [products, setProducts] = useState([])
+    const [products, setProducts] = useState([]);
+    const [selectedProduct,setSelectedProduct] = useState(null);
+    const [showModal, setShowModal] = useState(false);
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
     useEffect(() => {
-  fetch(`${supabaseUrl}/rest/v1/products?select=*,categories(name)`, {
+  fetch(`${supabaseUrl}/rest/v1/products?select=*,categories(name,color)`, {
     headers: {
       apikey: supabaseKey,
       Authorization: `Bearer ${supabaseKey}`,
@@ -57,6 +60,17 @@ const CardSection = () => {
     .then(data => setProducts(data))
     .catch(err => console.error(err));
 }, [supabaseUrl, supabaseKey]);
+
+
+    const handleViewDetails = (product) => {
+        setSelectedProduct(product);
+        setShowModal(true);
+    };
+
+    const handleCloseModal= () => {
+        setSelectedProduct(null);
+        setShowModal(false);
+    }
 
   return (
     <div className="bg-yellow-50 flex w-full p-8">
@@ -68,11 +82,17 @@ const CardSection = () => {
                 title={testProduct.title}
                 price={testProduct.price}
                 imageUrl={testProduct.main_image_url}
-                category={testProduct.categories?.name}
+                category={testProduct.categories}
+                available={testProduct.available}
+                onViewDetails={() => handleViewDetails(testProduct)}
+
             />
          ))}
             
         </div>
+        {showModal && selectedProduct &&(
+            <ProductModal product={selectedProduct} onClose={handleCloseModal}/>
+        )}
         
     </div>
 );

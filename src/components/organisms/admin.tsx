@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { useCategories } from "../../hooks/useCategories";
 import { DynamicIcon } from "lucide-react/dynamic";
 import  PrincipalDnD  from "../molecules/principalDnD";
 import Card from "../molecules/card";
@@ -8,12 +9,26 @@ const Admin = () => {
     const [stage, setStage] = useState(1);
     const [title, setTitle] = useState("Nombre del producto");
     const [price, setPrice] = useState("0.00");
-    const [category, setCategory] = useState("Categoria");
+    const [category, setCategory] = useState("");
+    const [available, setAvailable] = useState(true);
+    const [description, setDescription] = useState("");
     const [imageUrl, setImageUrl] = useState("https://placehold.co/400x300");
     const [selectedFile, setSelectedFile] = useState(null);
-    const [categories, setCategories] = useState([]);
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
+    const categories = useCategories();
+
+    useEffect(() => {
+    if (categories.length > 0 && !category) {
+        setCategory(categories[0].name);
+    }
+}, [categories, category]);
+
+    useEffect(() => {
+    if (description.length == 0){
+        setDescription("Este producto es tan asombroso que es indescriptible, no tenemos una descripcion... por el momento");
+    }
+    },[description]);
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -29,18 +44,6 @@ const supabase = createClient(
         };
         reader.readAsDataURL(file);
     };
-
-    useEffect(() => {
-        fetch(`${supabaseUrl}/rest/v1/categories`, {
-            headers: {
-                apikey: supabaseKey,
-                Authorization: `Bearer ${supabaseKey}`,
-            },
-        })
-        .then(res => res.json())
-        .then(data => setCategories(data))
-        
-    }, [supabaseUrl, supabaseKey]);
 
     const handleSave = async () => {
         let uploadedImageUrl = imageUrl;
@@ -78,7 +81,9 @@ const supabase = createClient(
             title,
             price: parseFloat(price),
             main_image_url: uploadedImageUrl,
-            category_id: categoryObj ? categoryObj.id : null
+            category_id: categoryObj ? categoryObj.id : null,
+            available: Boolean(available),
+            description,
         })
     });
     if (response.ok){
@@ -145,21 +150,36 @@ const supabase = createClient(
                                     <input type="text" className="border border-purple-300 rounded py-1 indent-6 w-full" placeholder="0.0" onChange={e => setPrice(e.target.value)}/>
                                 </div>
                                 </div>
-                                <div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div>
                                     <h1>Categoria</h1>
-                                    <select name="category" id="category" className="border border-purple-300 rounded py-1 indent-2 w-full" onChange={e => setCategory(e.target.value)} >
+                                    <select name="category" id="category" className="border border-purple-300 rounded py-1 indent-2 w-full" onChange={e => setCategory(e.target.value)} value={category} >
                                     {categories.map((category)=> (
                                         <option key={category.id} value={category.name}>{category.name}</option>
                                     ))}
-                                        
-
-
                                     </select>
                                 </div>
+                                <div>
+                                    <h1>Disponibilidad</h1>
+                                    <select name="available" id="available" className="border border-purple-300 rounded py-1 indent-2 w-full" onChange={e => setAvailable(e.target.value === "TRUE")} value={available ? "TRUE" : "FALSE"} >
+                                        <option value="TRUE">Disponible</option>
+                                        <option value="FALSE">Agotado</option>
+                                    </select>
+                                </div>
+                                </div>
+                                
                                 
                                 
                             </div>
                             
+                        </div>
+
+                        <div className="w-full bg-stone-50 text-blue-600 flex flex-col gap-3 p-4 mt-4 rounded-xl border-2 border-dotted border-purple-300">
+                            <div className="flex items-center gap-1">
+                                <DynamicIcon name="align-left" color="currentColor" className="w-4 h-4"/>
+                                <h1 className="text-l font-medium">Descripcion</h1>
+                            </div>
+                            <textarea className="border border-purple-300 rounded resize-none indent-2 py-1 min-h-[100px] text-black" placeholder="Descripcion del producto" onChange={e => setDescription(e.target.value)}/>
                         </div>
 
                     </div>
@@ -177,6 +197,7 @@ const supabase = createClient(
                             price={price}
                             imageUrl={imageUrl}
                             category={category}
+                            available={available}
                         />
 
                     </div>

@@ -73,7 +73,7 @@ const CardSection = () => {
     }
 
   return (
-    <div className="bg-yellow-50 flex w-full p-8">
+    <div className="bg-yellow-50 flex w-full p-12 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         
         {products.map((testProduct) => (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Card from "../molecules/card";
-import ProductModal from "../molecules/ProductModal";
+import ProductModal from "../molecules/productModal";
 
 
 const testProduct = [{

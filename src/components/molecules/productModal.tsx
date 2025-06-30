@@ -1,8 +1,13 @@
 import { Pill } from "../atoms/Pill";
 import React from "react";
+import UseWhatsappLink from "../../hooks/useWhatsappLink";
 
-const ProductModal = ({ product, onClose }) => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+
+const ProductModal = ({ product, onClose, sendMessage}) => {
+    const whatsappLink = UseWhatsappLink(product);
+
+    return (
+<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div className="bg-white grid md:grid-cols-2 md:w-4/5 md:h-4/6 rounded relative p-8 gap-8">
             <button
                 className="absolute top-2 right-2 text-pink-300 hover:text-pink-400 bg-gray-100 p-2 rounded-full w-8 h-8 items-center justify-center flex"
@@ -32,13 +37,19 @@ const ProductModal = ({ product, onClose }) => (
                 </div>
                 <h1 className="text-purple-300 font-medium">Descripcion</h1>
                 <h2 className="text-gray-600">{product.description}</h2>
-                <Pill text="Comprar" className="!w-full !h-10 bg-gradient-to-r from-pink-300 to-purple-300 md:mt-auto mt-4"/>
+                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="md:mt-auto mt-4 h-10">
+                    <Pill text="Comprar" className="!w-full !h-10 bg-gradient-to-r from-pink-300 to-purple-300" onClick={UseWhatsappLink}/>
+                </a>
+                
                 
             </div>
             
             
         </div>
     </div>
-);
+    );
+};
+    
+
 
 export default ProductModal;

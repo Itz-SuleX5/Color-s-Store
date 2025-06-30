@@ -1,7 +1,6 @@
 import { Pill } from "../atoms/Pill";
 import React from "react";
 import UseWhatsappLink from "../../hooks/useWhatsappLink";
-import useSignedImageUrl from "../../hooks/useSignedImageUrl";
 
 
 const ProductModal = ({ product, onClose}) => {

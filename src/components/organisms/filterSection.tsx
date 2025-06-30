@@ -3,7 +3,7 @@ import { DynamicIcon } from "lucide-react/dynamic";
 import { Pill } from "../atoms/Pill";
 import { useCategories } from "../../hooks/useCategories";
 
-const FilterSection = ({selectedCategory, setSelectedCategory}) => {
+const FilterSection = ({setSelectedCategory}) => {
     const categories = useCategories();
     
     return (

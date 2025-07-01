@@ -5,7 +5,7 @@ import FilterSection from "./filterSection";
 import { UseProducts } from "../../hooks/useProducts";
 
 const CardSection = () => {
-  const { products = [] } = UseProducts()
+    const { products, isLoading, isError, error, refetch } = UseProducts();
     const [selectedProduct,setSelectedProduct] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState("Todos")
     const [showModal, setShowModal] = useState(false);

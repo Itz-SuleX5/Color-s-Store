@@ -7,7 +7,7 @@ import { DynamicIcon } from "lucide-react/dynamic";
 const itemsPerPage = 10;
 
 const ProductList = ({ setSelectedProduct, setStage }) => {
-    const { products = [], refetch } = UseProducts();
+    const {products, isLoading, isError, error, refetch} = UseProducts();
     const [currentpage, setCurrentPage] = useState(0);
     
 
@@ -22,7 +22,7 @@ const ProductList = ({ setSelectedProduct, setStage }) => {
     }
 
     const deleteProduct = async (id) => {
-        fetch(`${supabaseUrl}/rest/v1/products?id=eq.${id}`, {
+        await fetch(`${supabaseUrl}/rest/v1/products?id=eq.${id}`, {
         method:"DELETE",
             headers: {
             apikey: supabaseKey,
@@ -78,7 +78,7 @@ const ProductList = ({ setSelectedProduct, setStage }) => {
                         <button onClick={() => {setSelectedProduct(product), setStage(1)}}>
                             <DynamicIcon name="pen" color="currentColor" className="text-purple-400"/>
                         </button>
-                        <button onClick={() => {deleteProduct(product.id); refetch(); }}>
+                        <button onClick={() => deleteProduct(product.id)}>
                             <DynamicIcon name="trash-2" color="currentColor" className="text-red-400" />
                         </button>
                     </div>

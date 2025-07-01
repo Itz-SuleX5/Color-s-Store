@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Upload, X } from 'lucide-react';
 
-export default function PrincipalDnD({onImageChange}) {
+export default function PrincipalDnD({onImageChange, initialImage }) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState(initialImage || null);
   const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {
@@ -44,11 +44,10 @@ export default function PrincipalDnD({onImageChange}) {
     reader.onload = (e) => {
       setImagePreview(e.target.result);
       if (onImageChange) {
-    onImageChange(file);
-  }
+        onImageChange(file);
+      }
     };
     reader.readAsDataURL(file);
-    
   };
 
   const removeImage = () => {
@@ -56,6 +55,10 @@ export default function PrincipalDnD({onImageChange}) {
     setImagePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+    // Notificar al padre que se removió la imagen
+    if (onImageChange) {
+      onImageChange(null);
     }
   };
 
@@ -69,6 +72,21 @@ export default function PrincipalDnD({onImageChange}) {
   const handleButtonClick = () => {
     fileInputRef.current?.click();
   };
+
+  // Efecto para manejar cambios en initialImage
+  useEffect(() => {
+    if (initialImage) {
+      setImagePreview(initialImage);
+      setSelectedFile(null); // Resetear selectedFile cuando hay initialImage
+    } else {
+      // Si initialImage es null o vacío, resetear todo
+      setImagePreview(null);
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [initialImage]);
 
   return (
     <div className="flex bg-gray-50 p-4">
@@ -114,16 +132,18 @@ export default function PrincipalDnD({onImageChange}) {
             </button>
 
             {/* File Info Overlay */}
-            <div className="absolute bottom-4 left-4 right-4">
-              <div className="bg-black bg-opacity-70 backdrop-blur-sm rounded-lg p-3">
-                <p className="text-white text-sm font-medium">
-                  {selectedFile.name}
-                </p>
-                <p className="text-gray-300 text-xs">
-                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                </p>
+            {selectedFile && (
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="bg-black bg-opacity-70 backdrop-blur-sm rounded-lg p-3">
+                  <p className="text-white text-sm font-medium">
+                    {selectedFile.name}
+                  </p>
+                  <p className="text-gray-300 text-xs">
+                    {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         ) : (
           // Upload Mode

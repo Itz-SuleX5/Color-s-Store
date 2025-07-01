@@ -10,7 +10,7 @@ interface ProductCardProps {
 const Card: React.FC<ProductCardProps> = ({title, price, imageUrl, category, available, onViewDetails}) => (
     <div className="bg-white rounded-lg border border-purple-300">
         <div className="relative w-auto h-80 overflow-hidden rounded-t-lg">
-            <img src={imageUrl} alt="" className="object-cover w-full h-full"/>
+            <img src={imageUrl || "https://placehold.co/400x300"} alt="" className="object-cover w-full h-full"/>
             <div className={`absolute z-10 top-2 right-2 py-1 px-2 rounded text-white rotate-6 ${category.color}`}>
                 {category.name}
             </div>

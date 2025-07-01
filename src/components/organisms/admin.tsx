@@ -6,6 +6,7 @@ import CategoriesList from "../molecules/categoriesList";
 
 const Admin = () => {
     const [stage, setStage] = useState(1);
+    const [selectedProduct, setSelectedProduct] = useState(null);
     
 
 
@@ -17,7 +18,7 @@ const Admin = () => {
                 <div className="flex gap-10 border-b-2">
                     <button 
                         className={`py-4 ${stage === 1 ? "border-b-2 text-purple-400 border-pink-300" : "text-gray-600"}`} 
-                        onClick={() => setStage(1)}
+                        onClick={() => {setStage(1); setSelectedProduct(null)}}
                     >
                         Nuevo producto
                     </button>
@@ -38,11 +39,11 @@ const Admin = () => {
                 
 
             {stage === 1 && (
-                <NewProduct/>
+                <NewProduct selectedProduct={selectedProduct}/>
             )}
 
             {stage === 2 &&(
-                <ProductList/>
+                <ProductList setSelectedProduct={setSelectedProduct} setStage={setStage}/>
             )}    
             
             {stage === 3 &&(

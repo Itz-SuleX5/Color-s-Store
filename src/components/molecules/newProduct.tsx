@@ -6,20 +6,44 @@ import { createClient } from "@supabase/supabase-js";
 import PrincipalDnD from "./principalDnD";
 
 
-const NewProduct = () => {
-
-    const [title, setTitle] = useState("Nombre del producto");
-        const [price, setPrice] = useState("0.00");
-        const [category, setCategory] = useState("");
-        const [available, setAvailable] = useState(true);
-        const [description, setDescription] = useState("");
-        const [imageUrl, setImageUrl] = useState("https://placehold.co/400x300");
-        const [selectedFile, setSelectedFile] = useState(null);
+const NewProduct = ({ selectedProduct, setSelectedProduct }) => {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
         const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
         const categories = useCategories();
+        const [title, setTitle] = useState("");
+        const [price, setPrice] = useState("");
+        const [category, setCategory] = useState("");
+        const [available, setAvailable] = useState(true);
+        const [description, setDescription] = useState("");
+        const [imageUrl, setImageUrl] = useState("");
+        const [selectedFile, setSelectedFile] = useState(null);
+        const [method, setMethod] = useState("POST");
+        const [url, setUrl] = useState(`${supabaseUrl}/rest/v1/products`);
+        
 
-        useEffect(() => {
+    useEffect(() => {
+    if (selectedProduct) {
+        setTitle(selectedProduct.title);
+        setPrice(selectedProduct.price);
+        setCategory(selectedProduct.categories?.name);
+        setAvailable(selectedProduct.available);
+        setImageUrl(selectedProduct.main_image_url);
+        setSelectedFile(null);
+        setMethod("PATCH");
+        setUrl(`${supabaseUrl}/rest/v1/products?id=eq.${selectedProduct.id}`);
+    } else {
+        setTitle("");
+        setPrice("");
+        setCategory("");
+        setAvailable(true);
+        setImageUrl("");
+        setSelectedFile(null);
+        setMethod("POST");  // ← Faltaba esto
+        setUrl(`${supabaseUrl}/rest/v1/products`);  // ← Y esto
+    }
+}, [selectedProduct]);
+
+    useEffect(() => {
     if (categories.length > 0 && !category) {
         setCategory(categories[0].name);
     }
@@ -46,9 +70,9 @@ const supabase = createClient(
         reader.readAsDataURL(file);
     };
 
-    const handleSave = async () => {
+    const handleSaveAndReset = async () => {
         let uploadedImageUrl = imageUrl;
-        if (selectedFile) {
+        if (selectedFile && selectedFile instanceof File) {
     const fileName = selectedFile.name; // Usa el nombre original
     const { data, error } = await supabase
         .storage
@@ -70,8 +94,17 @@ const supabase = createClient(
     
 
     const categoryObj = categories.find(cat => cat.name === category);
-    const response = await fetch(`${supabaseUrl}/rest/v1/products`, {
-        method:"POST",
+    const body = {
+        title,
+        price: parseFloat(price),
+        main_image_url: uploadedImageUrl,
+        category_id: categoryObj ? categoryObj.id : null,
+        available: Boolean(available),
+        description,
+    };
+    console.log("Body enviado al fetch:", body);
+    const response = await fetch(url,{
+        method:method,
         headers: {
             apikey: supabaseKey,
             Authorization: `Bearer ${supabaseKey}`,
@@ -92,7 +125,17 @@ const supabase = createClient(
     } else {
         alert("Error al guardar el producto")
     }
+
+        setTitle("");
+        setPrice("");
+        setCategory("");
+        setAvailable(true);
+        setImageUrl("");
+        setSelectedFile(null);
+        setSelectedProduct(null);
     };
+
+
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 items-start">
@@ -102,7 +145,7 @@ const supabase = createClient(
                                 <DynamicIcon name="image" color="currentColor" className="w-4 h-4"/>
                                 <h1 className="text-l font-medium">Imagen principal</h1>
                             </div>
-                            <PrincipalDnD onImageChange={handleImageChange}/>
+                            <PrincipalDnD onImageChange={handleImageChange} initialImage={imageUrl}/>
                         </div>
 
                         <div className="w-full bg-stone-50  flex flex-col gap-3 p-4 mt-4 rounded-xl border-2 border-dotted border-purple-300">
@@ -112,7 +155,7 @@ const supabase = createClient(
                             </div>
                             <div>
                                 <h1>Titulo</h1>
-                                <input type="text" className="border border-purple-300 rounded w-full py-1 indent-2" placeholder="Nombre del producto" onChange={e => setTitle(e.target.value)}/>
+                                <input type="text" className="border border-purple-300 rounded w-full py-1 indent-2" placeholder="Nombre del producto" onChange={e => setTitle(e.target.value)} value={title}/>
                             </div>
                             <div className="flex flex-col grid grid-cols-2 gap-2">
                                 <div>
@@ -122,7 +165,7 @@ const supabase = createClient(
                                         <h1 className="text-gray-500">$</h1>
                                     </div>
                                     
-                                    <input type="text" className="border border-purple-300 rounded py-1 indent-6 w-full" placeholder="0.0" onChange={e => setPrice(e.target.value)}/>
+                                    <input type="text" className="border border-purple-300 rounded py-1 indent-6 w-full" placeholder="0.0" onChange={e => setPrice(e.target.value)} value={price}/>
                                 </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
@@ -154,7 +197,7 @@ const supabase = createClient(
                                 <DynamicIcon name="align-left" color="currentColor" className="w-4 h-4"/>
                                 <h1 className="text-l font-medium">Descripcion</h1>
                             </div>
-                            <textarea className="border border-purple-300 rounded resize-none indent-2 py-1 min-h-[100px] text-black" placeholder="Descripcion del producto" onChange={e => setDescription(e.target.value)}/>
+                            <textarea className="border border-purple-300 rounded resize-none indent-2 py-1 min-h-[100px] text-black" placeholder="Descripcion del producto" onChange={e => setDescription(e.target.value)} value={description}/>
                         </div>
 
                     </div>
@@ -179,7 +222,7 @@ const supabase = createClient(
                         
             <div className="flex justify-center py-2">
                                             <button className="text-white bg-gradient-to-r from-pink-300 to-purple-300 flex p-2 rounded-full transition-all duration-300
-                                            transform hover:scale-105 hover:from-pink-400 hover:to-purple-400" onClick={handleSave}>
+                                            transform hover:scale-105 hover:from-pink-400 hover:to-purple-400" onClick={() => { handleSaveAndReset()}} >
                                                 <DynamicIcon name="save" color="currentColor" className="text-white"/>
                                                 Guardar producto
                                             </button>

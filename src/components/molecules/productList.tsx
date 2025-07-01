@@ -6,9 +6,10 @@ import { DynamicIcon } from "lucide-react/dynamic";
 
 const itemsPerPage = 10;
 
-const ProductList = () => {
+const ProductList = ({ setSelectedProduct, setStage }) => {
     const { products = [], refetch } = UseProducts();
     const [currentpage, setCurrentPage] = useState(0);
+    
 
     const offset = currentpage * itemsPerPage;
     const currentProducts = products.slice(offset, offset + itemsPerPage);
@@ -74,7 +75,7 @@ const ProductList = () => {
                     </div>
                     <div className="flex gap-4">
                         
-                        <button>
+                        <button onClick={() => {setSelectedProduct(product), setStage(1)}}>
                             <DynamicIcon name="pen" color="currentColor" className="text-purple-400"/>
                         </button>
                         <button onClick={() => {deleteProduct(product.id); refetch(); }}>

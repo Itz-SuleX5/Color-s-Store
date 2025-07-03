@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 import PrincipalDnD from "./principalDnD";
 
 
-const NewProduct = ({ selectedProduct, setSelectedProduct }) => {
+const NewProduct = ({ selectedProduct, setSelectedProduct, refetch }) => {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
         const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
         const categories = useCategories();
@@ -121,7 +121,8 @@ const supabase = createClient(
         })
     });
     if (response.ok){
-        alert("Product guardado correctamente")
+        alert("Product guardado correctamente");
+        refetch();
     } else {
         alert("Error al guardar el producto")
     }

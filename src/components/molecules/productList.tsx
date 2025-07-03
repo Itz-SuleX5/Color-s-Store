@@ -1,19 +1,21 @@
-import React, { useState }from "react";
+import React, { useState } from "react";
 import ReactPaginate from "react-paginate";
-import { UseProducts } from "../../hooks/useProducts";
+import { UseProductsPaginated } from "../../hooks/useProducts";
 import { Pill } from "../atoms/Pill";
 import { DynamicIcon } from "lucide-react/dynamic";
 
 const itemsPerPage = 10;
 
 const ProductList = ({ setSelectedProduct, setStage }) => {
-    const {products, isLoading, isError, error, refetch} = UseProducts();
-    const [currentpage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
     
-
-    const offset = currentpage * itemsPerPage;
-    const currentProducts = products.slice(offset, offset + itemsPerPage);
-    const pageCount = Math.ceil(products.length / itemsPerPage);
+    // Destructure the data object to get the actual products array
+    const { products: data, isLoading, refetch } = UseProductsPaginated(currentPage, itemsPerPage);
+    
+    // Extract the products array and totalPages from the data object
+    const products = data?.products || [];
+    const totalPages = data?.totalPages || 1;
+    
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
@@ -23,16 +25,21 @@ const ProductList = ({ setSelectedProduct, setStage }) => {
 
     const deleteProduct = async (id) => {
         await fetch(`${supabaseUrl}/rest/v1/products?id=eq.${id}`, {
-        method:"DELETE",
+            method: "DELETE",
             headers: {
-            apikey: supabaseKey,
-            Authorization: `Bearer ${supabaseKey}`,
-            "Content-Type": "application/json",
-            Prefer: "return=representation"
-        }
-    });
-    refetch();
-}
+                apikey: supabaseKey,
+                Authorization: `Bearer ${supabaseKey}`,
+                "Content-Type": "application/json",
+                Prefer: "return=representation"
+            }
+        });
+        refetch();
+    }
+
+    // Show loading state
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>
@@ -56,7 +63,7 @@ const ProductList = ({ setSelectedProduct, setStage }) => {
                     <h1>Acciones</h1>
                 </div>
             </div>
-            {currentProducts.map((product) => (
+            {products.map((product) => (
                 <div key={product.id} className="grid grid-cols-[1fr_5fr_2fr_1fr_1fr_1fr] items-center border-b border-purple-100 py-2">
                     <div>
                         <img src={product.imageUrl || product.main_image_url} alt={product.title} className="w-20 h-20 object-cover rounded" />
@@ -74,7 +81,6 @@ const ProductList = ({ setSelectedProduct, setStage }) => {
                         <Pill text={product.available ? "Disponible" : "Agotado"} className={product.available ? "bg-emerald-300" : "bg-red-300"}/>
                     </div>
                     <div className="flex gap-4">
-                        
                         <button onClick={() => {setSelectedProduct(product), setStage(1)}}>
                             <DynamicIcon name="pen" color="currentColor" className="text-purple-400"/>
                         </button>
@@ -88,7 +94,7 @@ const ProductList = ({ setSelectedProduct, setStage }) => {
                 previousLabel={"Anterior"}
                 nextLabel={"Siguiente"}
                 breakLabel={"..."}
-                pageCount={pageCount}
+                pageCount={totalPages} // Use the actual total pages from the hook
                 marginPagesDisplayed={2}
                 pageRangeDisplayed={3}
                 onPageChange={handlePageClick}
@@ -98,6 +104,7 @@ const ProductList = ({ setSelectedProduct, setStage }) => {
                 previousClassName={"px-2 py-1"}
                 nextClassName={"px-2 py-1"}
                 breakClassName={"px-2 py-1"}
+                forcePage={currentPage} // Add this to keep the pagination in sync
             />
         </div>
     );

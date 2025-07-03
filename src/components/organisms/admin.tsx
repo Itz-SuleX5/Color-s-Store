@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import NewProduct from "../molecules/newProduct";
 import ProductList from "../molecules/productList";
 import CategoriesList from "../molecules/categoriesList";
-
+import { UseProductsPaginated } from "../../hooks/useProducts";
 
 const Admin = () => {
     const [stage, setStage] = useState(1);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const {products, isLoading, isError, error, refetch} = UseProductsPaginated();
     
 
 
@@ -39,11 +40,11 @@ const Admin = () => {
                 
 
             {stage === 1 && (
-                <NewProduct selectedProduct={selectedProduct}/>
+                <NewProduct selectedProduct={selectedProduct} refetch={refetch}/>
             )}
 
             {stage === 2 &&(
-                <ProductList setSelectedProduct={setSelectedProduct} setStage={setStage}/>
+                <ProductList setSelectedProduct={setSelectedProduct} setStage={setStage} products={products} refetch={refetch}/>
             )}    
             
             {stage === 3 &&(

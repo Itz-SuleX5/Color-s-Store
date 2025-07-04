@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { useCategories } from "../../hooks/useCategories";
 import Card from "../molecules/card";
+import { supabase } from '../../utilities/supabase';
 import { createClient } from "@supabase/supabase-js";
 import PrincipalDnD from "./principalDnD";
 
@@ -55,10 +56,6 @@ const NewProduct = ({ selectedProduct, setSelectedProduct, refetch }) => {
     }
     },[description]);
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_KEY
-);
 
     const handleImageChange = (file) => {
         if (!file) return;

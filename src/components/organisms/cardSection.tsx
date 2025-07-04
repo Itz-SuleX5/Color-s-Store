@@ -19,6 +19,7 @@ const CardSection = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState("Todos");
     const [showModal, setShowModal] = useState(false);
+    const [showShipment, setShowShipment] = useState(false);
     
     // Ref para el último elemento (para intersection observer)
     const lastElementRef = useRef(null);
@@ -127,6 +128,8 @@ const CardSection = () => {
                 <ProductModal 
                     product={selectedProduct} 
                     onClose={handleCloseModal} 
+                    setShowShipment={setShowShipment}
+                    showShipment={showShipment}
                 />
             )}
         </div>

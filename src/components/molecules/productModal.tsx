@@ -1,11 +1,12 @@
 import { Pill } from "../atoms/Pill";
-import React from "react";
+import React, { useState } from "react";
 import UseWhatsappLink from "../../hooks/useWhatsappLink";
-import { Link } from "react-router-dom";
+import ShipmentInfoModal from "./ShipmentInfoModal";
 
 
-const ProductModal = ({ product, onClose}) => {
+const ProductModal = ({ product, onClose, setShowShipment, showShipment}) => {
     const whatsappLink = UseWhatsappLink(product);
+
 
     return (
 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -42,9 +43,7 @@ const ProductModal = ({ product, onClose}) => {
                     <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className=" h-10">
                     <Pill text="Comprar" className="!w-full !h-10 bg-gradient-to-r from-pink-300 to-purple-300" onClick={UseWhatsappLink}/>
                 </a>
-                <Link to="/">
-                <Pill text="Informacion de envio" icon="info" className="!w-full !h-10 bg-gradient-to-r from-teal-200 to-pink-300"></Pill>
-                </Link>
+                <Pill text="Informacion de envio" icon="info" className="!w-full !h-10 bg-gradient-to-r from-teal-200 to-pink-300" onClick={() => setShowShipment(true)}></Pill>
                 </div>
                 
                 
@@ -53,6 +52,10 @@ const ProductModal = ({ product, onClose}) => {
             
             
         </div>
+        {showShipment &&(
+            <ShipmentInfoModal setShowShipment={setShowShipment}/>
+        )}
+        
     </div>
     );
 };

@@ -9,10 +9,18 @@ interface PillProps {
     icon: string;
     children?: ReactNode;
 }
-const Pill: React.FC<PillProps> = ({text, className = "", onClick, icon = ""}) => (
-    <button className={`md:h-10 md:w-20 h-10 w-20 p-0 rounded-full text-white cursor-pointer flex items-center justify-center gap-2 flex-shrink-0 hover:brightness-90 ${className}`} onClick={onClick}>
+
+
+const Pill: React.FC<PillProps> = ({text, className = "", onClick, icon = ""}) => {
+
+    const width = `w-[${text.length * 2}px]`;
+
+    return (
+        <button className={`h-10 p-0 rounded-full text-white cursor-pointer flex items-center justify-center gap-2 flex-shrink-0 hover:brightness-90 ${width} ${className}`} onClick={onClick}>
             {icon && <DynamicIcon name={icon} color="currentColor" className="text-white"/>}<span>{text}</span>
         </button>
-);
+    )
+    
+};
 
 export { Pill }

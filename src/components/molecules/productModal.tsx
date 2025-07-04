@@ -1,6 +1,7 @@
 import { Pill } from "../atoms/Pill";
 import React from "react";
 import UseWhatsappLink from "../../hooks/useWhatsappLink";
+import { Link } from "react-router-dom";
 
 
 const ProductModal = ({ product, onClose}) => {
@@ -37,9 +38,15 @@ const ProductModal = ({ product, onClose}) => {
                 </div>
                 <h1 className="text-purple-300 font-medium">Descripcion</h1>
                 <h2 className="text-gray-600">{product.description}</h2>
-                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="md:mt-auto mt-4 h-10">
+                <div className="flex flex-col gap-2 md:mt-auto mt-4">
+                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className=" h-10">
                     <Pill text="Comprar" className="!w-full !h-10 bg-gradient-to-r from-pink-300 to-purple-300" onClick={UseWhatsappLink}/>
                 </a>
+                <Link to="/">
+                <Pill text="Informacion de envio" icon="info" className="!w-full !h-10 bg-gradient-to-r from-teal-200 to-pink-300"></Pill>
+                </Link>
+                </div>
+                
                 
                 
             </div>

@@ -22,16 +22,8 @@ const Admin = () => {
                 const { data: { session } } = await supabase.auth.getSession();
                 
                 if (session?.user) {
-                    // Verificar si el email coincide con el admin
-                    const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+                    setUser(session.user);
                     
-                    if (session.user.email === adminEmail) {
-                        setUser(session.user);
-                    } else {
-                        // Si no es el admin, redirigir al home
-                        navigate('/');
-                        return;
-                    }
                 } else {
                     // No hay sesión, redirigir a auth
                     navigate('/admin-auth');
@@ -53,15 +45,9 @@ const Admin = () => {
                 if (event === 'SIGNED_IN' && session?.user) {
                     const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
                     
-                    if (session.user.email === adminEmail) {
+                    
                         setUser(session.user);
-                        // Redirigir al admin después del login exitoso
                         navigate('/admin');
-                    } else {
-                        // Email no autorizado
-                        await supabase.auth.signOut();
-                        navigate('/');
-                    }
                 } else if (event === 'SIGNED_OUT') {
                     setUser(null);
                     navigate('/admin-auth');

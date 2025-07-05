@@ -1,18 +1,56 @@
-import React, { useState }from "react";
+import React, { useState, useRef, useEffect }from "react";
 import { DynamicIcon } from "lucide-react/dynamic";
 
-const Navbar = () => {
+const Navbar = ({term, setTerm}) => {
     const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState(false);
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        if (search && inputRef.current){
+            inputRef.current.focus();
+        }
+    }, [search]);
 
     return (
-    <nav>
-        <div className="p-4 flex justify-between px-7">
+    <nav className="w-full">
+        <div className="p-4 flex grid grid-cols-3 px-7">
             <button onClick={() => setOpen(!open)}>
                 <DynamicIcon name="menu" color="currentColor" className="text-fuchsia-400"/>
             </button>
             
-            <h1 className="text-fuchsia-400 font-bold">Color's Store</h1>
-            <DynamicIcon name="search" color="currentColor" className="text-fuchsia-400"/>
+            <h1 className="text-fuchsia-400 font-bold text-center">Color's Store</h1>
+            <div className="flex relative justify-end">
+                <div className="relative w-60 flex">
+                    {search &&(
+                    <div>
+                    <div className="absolute left-2 top-1">
+                        <DynamicIcon name="search" color="currentColor" className="text-fuchsia-400"/>
+                    </div>
+                    { term!=('') &&(
+                    <div className="absolute right-2 top-1">
+                        <button type="button" onClick={() => setTerm('')}>
+                            <DynamicIcon name="x" color="currentColor" className="text-fuchsia-600"/>
+                        </button>
+                        
+                    </div> 
+                    )}
+                     
+                
+                    <input ref={inputRef} type="text" className="rounded-full border border-fuchsia-400 indent-8 w-60 h-8" placeholder="Buscar productos..." onChange={(e) => setTerm(e.target.value)} onBlur={() => setTimeout(() => setSearch(false), 150)} value={term}/>
+                    </div>
+                    )}
+                {!search &&(
+                    <button onClick={() => setSearch(true)} className="ml-auto">
+                        <DynamicIcon name="search" color="currentColor" className="text-fuchsia-400"/>
+                    </button>
+                )}
+                    
+                    
+                    
+                </div>
+            </div>
+            
         </div>
         
         {open &&(

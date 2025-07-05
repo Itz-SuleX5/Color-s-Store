@@ -1,5 +1,5 @@
 // src/App.js - Tu App modificada
-import React from "react";
+import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/organisms/navbar";
@@ -20,12 +20,15 @@ const queryClient = new QueryClient({
   },
 });
 
+
+
 // Componente para redirigir /admin a /admin-auth si no está autenticado
 const AdminRedirect = () => {
   return <Navigate to="/admin-auth" replace />;
 };
 
 const App = () => {
+  const [term, setTerm] = useState('');
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
@@ -33,7 +36,7 @@ const App = () => {
           <main className="flex-1">
             <Routes>
               {/* Ruta principal */}
-              <Route path="/" element={<> <Navbar/><CardSection/> <Footer/></>}/>
+              <Route path="/" element={<> <Navbar term={term} setTerm={setTerm}/><CardSection term={term}/> <Footer/></>}/>
               
               {/* Ruta de admin protegida */}
               <Route path="/admin" element={<Admin/>}/>

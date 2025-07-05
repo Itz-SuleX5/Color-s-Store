@@ -7,7 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 import PrincipalDnD from "./principalDnD";
 
 
-const NewProduct = ({ selectedProduct, setSelectedProduct, refetch }) => {
+const NewProduct = ({ selectedProduct, refetch }) => {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
         const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
         const categories = useCategories();

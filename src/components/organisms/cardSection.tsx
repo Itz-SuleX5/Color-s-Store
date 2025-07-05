@@ -3,8 +3,9 @@ import Card from "../molecules/card";
 import ProductModal from "../molecules/productModal";
 import FilterSection from "./filterSection";
 import { useProductsScrolled } from "../../hooks/useProducts";
+import { PacmanLoader } from "react-spinners";
 
-const CardSection = () => {
+const CardSection = ( {term} ) => {
     // Usar el hook correcto con destructuring apropiado
     const { 
         products, 
@@ -28,9 +29,14 @@ const CardSection = () => {
     const allProducts = products?.pages?.flatMap(page => page.products) || [];
     
     // Filtrar productos por categoría
-    const filteredProducts = selectedCategory === "Todos" 
+    const filteredByCategory = selectedCategory === "Todos" 
         ? allProducts 
         : allProducts.filter(p => p.categories?.name === selectedCategory);
+
+    const filteredProducts = term 
+        ? filteredByCategory.filter((p) => p.title.toLowerCase().includes(term.toLowerCase()))   
+        : filteredByCategory
+
     
     // Intersection Observer para detectar cuando llegar al final
     const lastProductElementRef = useCallback(node => {
@@ -60,7 +66,7 @@ const CardSection = () => {
     if (status === 'loading') {
         return (
             <div className="flex justify-center items-center h-64">
-                <div className="text-lg">Cargando productos...</div>
+                <PacmanLoader color="#ee82d1"/>
             </div>
         );
     }
@@ -75,7 +81,7 @@ const CardSection = () => {
 
     return (
         <div>
-            <FilterSection setSelectedCategory={setSelectedCategory} />
+            <FilterSection setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} />
             <div className="bg-yellow-50 w-full p-12 md:p-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {filteredProducts.map((testProduct) => (
